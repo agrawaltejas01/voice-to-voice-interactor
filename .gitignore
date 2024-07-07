@@ -1,0 +1,7 @@
+.ttm/
+uploaded_files/
+client/node_modules/
+client/public/
+*.env
+*context*
+gcp-text-to-speech-key.json
