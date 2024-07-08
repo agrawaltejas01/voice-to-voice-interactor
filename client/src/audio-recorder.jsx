@@ -57,7 +57,8 @@ const AudioRecorder = () => {
     formData.append("file", blob, "recording.webm");
 
     console.log("File prepared, sending...");
-    const url = "http://127.0.0.1:5000/upload";
+    // const url = "http://127.0.0.1:5000/upload";
+    const url = "http://3.111.150.170//upload";
 
     axios
       .post(url, formData, {
