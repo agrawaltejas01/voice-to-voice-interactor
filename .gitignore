@@ -1,6 +1,10 @@
 .ttm/
+.vscode/
 uploaded_files/
 client/node_modules/
 *.env
 *context*
 gcp-text-to-speech-key.json
+**pycache**
+**conversation_summary**
+output.mp3
