@@ -11,6 +11,7 @@ def create_or_get_redis_client() -> redis.StrictRedis:
         redis_client = redis.StrictRedis(
             host=Config.REDIS_HOST, port=int(Config.REDIS_PORT), db=0,
             password=Config.REDIS_PASS, username=Config.REDIS_USER)
+
     return redis_client
 
 
