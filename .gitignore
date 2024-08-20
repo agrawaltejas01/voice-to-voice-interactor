@@ -3,7 +3,7 @@
 uploaded_files/
 client/node_modules/
 *.env
-*context*
+context*
 gcp-text-to-speech-key.json
 **pycache**
 **conversation_summary**
