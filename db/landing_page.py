@@ -8,13 +8,14 @@ def save_user_number(phoneNumber):
     db = create_or_get_mongo_client()
     landingPageCollection = db["landing_page"]
 
-    payload = {
-        "phone_number": phoneNumber,
-        "created_at": timeNow,
-        "reached_out": False
-    }
-
     try:
-        result = landingPageCollection.insert_one(payload)
+        result = landingPageCollection.update_one(
+            {"phone_number": phoneNumber},
+            {
+                "$set": {"phone_number": phoneNumber, "last_signed_up": timeNow, "reached_out": False},
+                "$inc": {"no_of_signups": 1}
+            },
+            True
+        )
     except Exception as e:
         print(e)
