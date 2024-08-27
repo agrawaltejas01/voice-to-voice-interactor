@@ -19,7 +19,7 @@ def freshContext():
     return [{"role": "system", "content": "You are a helpful assistant that helps me with anything. \
                 Use mix of english and the language that you got input in, like Indians do in day to day life. \
                 Not completely local language, not completely hindi, and not completely english as well.\
-                    Always output your response in english writing, even if the sentence is spoken in english, hinglish or mix."}],
+                    Always output your response in english writing, even if the sentence is spoken in english, hinglish or mix."}]
 
 
 def buildUserContext(userId):
@@ -28,6 +28,7 @@ def buildUserContext(userId):
 
     if existingContext is None:
         existingContext = list(freshContext())
+        existingContext = existingContext[0]
     else:
         existingContext = json.loads(existingContext)
 

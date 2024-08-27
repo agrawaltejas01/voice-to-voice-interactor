@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, send_file, Request, copy_current_request_context
 from user_context.index import getContext, setContext, buildUserContext
+from db.user_interaction import save_user_input, save_output
 
 import os
 from models.openai_with_file_backed_store import talk_to_me, generate_response_gpt3_with_file_context
@@ -43,7 +44,7 @@ def getTextFromAudio(req: Request):
         except Exception as e:
             error = jsonify({"error": str(e)})
 
-    return current_prompt, error
+    return current_prompt, file_path, error
 
 
 def inputBlock(req, userId):
@@ -52,6 +53,7 @@ def inputBlock(req, userId):
         return getTextFromAudio(req)
 
     context = []
+    current_context = []
 
     # Create a ThreadPoolExecutor to run functions in parallel
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -61,15 +63,19 @@ def inputBlock(req, userId):
 
         # Wait for both to complete and get the results
         context = future_context.result()
-        current_prompt, error = future_prompt.result()
+        current_prompt, file_path, error = future_prompt.result()
 
-    print(type(context), error)
     if error == None:
+        current_context = context
         print(current_prompt)
         context.append({
             "role": "user",
             "content": current_prompt
         })
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        executor.submit(
+            save_user_input, userId, {"current_context": current_context, "current_prompt": current_prompt}, context, file_path)
 
     return context, error
 
@@ -79,20 +85,21 @@ def saveContextWithResponse(userId, current_context_and_input, answer):
         "role": "system",
         "content": answer
     })
-    print(current_context_and_input)
     setContext(userId, current_context_and_input)
 
 
 def processingBlock(current_context_and_input, userId):
 
+    print(current_context_and_input)
     answer = generate_response_gpt3_with_file_context(
         current_context_and_input)
 
-    # Create a ThreadPoolExecutor to run functions in parallel
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        # Submit both functions to the executor
         executor.submit(
             saveContextWithResponse, userId, current_context_and_input, answer)
+        executor.submit(
+            save_output, userId, current_context_and_input, answer
+        )
 
     return answer
 
@@ -105,14 +112,15 @@ def voiceInput():
 
     start_time = time.time()
 
-    current_context_and_input, error = inputBlock(request, userId)
+    context_and_input, error = inputBlock(
+        request, userId)
     if error is not None:
         return error, 400
 
-    answer = processingBlock(current_context_and_input, userId)
+    # answer = processingBlock(context_and_input, userId)
 
     end_time = time.time()
     duration = end_time - start_time
 
-    # return jsonify({"current_prompt": current_context_and_input, "duration": duration}), 200
-    return jsonify({"ans": answer, "duration": duration}), 200
+    return jsonify({"current_prompt": context_and_input, "duration": duration}), 200
+    # return jsonify({"ans": answer, "duration": duration}), 200

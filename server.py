@@ -1,4 +1,5 @@
 from routes.index import inputRoute
+from routes.landing_page import landingPageRoute
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
@@ -19,6 +20,7 @@ print("Setting up connections")
 create_connections()
 
 app.register_blueprint(inputRoute, url_prefix="/input")
+app.register_blueprint(landingPageRoute, url_prefix="/landing_page")
 
 
 # @app.before_first_request

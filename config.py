@@ -17,3 +17,10 @@ class Config:
     REDIS_USER = os.environ["REDIS_USER"]
     REDIS_PASS = os.environ["REDIS_PASS"]
     REDIS_PORT = os.environ["REDIS_PORT"]
+
+    # MongoDB
+    MONGO_URI = os.environ["MONGO_URI"]
+    MONGO_DB = os.environ["MONGO_DB"]
+
+    # AWS S3 Buckets
+    USER_INTERACTION_BUCKET = os.environ["AWS_S3_BUCKET_USER_INTERACTION"]
