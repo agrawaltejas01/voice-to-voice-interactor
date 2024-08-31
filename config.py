@@ -1,3 +1,4 @@
+
 import os
 from dotenv import load_dotenv, find_dotenv
 
@@ -24,3 +25,4 @@ class Config:
 
     # AWS S3 Buckets
     USER_INTERACTION_BUCKET = os.environ["AWS_S3_BUCKET_USER_INTERACTION"]
+    RECORDING_BUCKET = os.environ["AWS_S3_RECORDING_BUCKET"]

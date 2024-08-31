@@ -1,6 +1,8 @@
 import redis
 from pymongo import MongoClient, database
 from bson import ObjectId
+import logging
+
 
 from config import Config
 
@@ -22,7 +24,12 @@ def create_or_get_mongo_client() -> database.Database[database._DocumentType]:
     global db
     if db is None:
         print("New DB connection")
+
+        logging.basicConfig()
+        logging.getLogger('pymongo.command').setLevel(logging.DEBUG)
+
         mongo = MongoClient(Config.MONGO_URI)
+
         db = mongo.get_database(Config.MONGO_DB)
     else:
         print("DB connection reused")

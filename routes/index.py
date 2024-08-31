@@ -124,3 +124,10 @@ def voiceInput():
 
     return jsonify({"current_prompt": context_and_input, "duration": duration}), 200
     # return jsonify({"ans": answer, "duration": duration}), 200
+
+
+@inputRoute.route("/recording", methods=["POST", "GET"])
+def store_recording():
+    query_params = str(request.query_string)
+    print(query_params)
+    return jsonify({"success": True}), 200

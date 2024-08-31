@@ -35,3 +35,13 @@ class AWS_S3:
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
+
+    def download_file_from_s3(cls, bucket_name, object_name, file_path):
+        try:
+            response = cls.s3.download_file(
+                bucket_name, object_name, file_path)
+            print(f"File downloaded successfully to {file_path}")
+            return response
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
