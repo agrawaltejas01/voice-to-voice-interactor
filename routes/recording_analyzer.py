@@ -4,6 +4,7 @@ from db.call_recording import get_recordings_to_analyze, mark_analysed
 
 import os
 from models.openai_with_file_backed_store import talk_to_me, generate_response_gpt3_with_file_context
+from models.langchain_analyser import context_analyser
 from models.text_speech_interconverters import transcribe_audio_whisper
 
 import time
@@ -26,24 +27,39 @@ def post_analysis_cleanup(recording_id, local_file_name):
     os.remove(local_file_name)
 
 
+def extract_analysis(phone, local_file_name):
+    text = transcribe_audio_whisper(local_file_name)
+    # Read text from transcription.txt file
+
+
 @recordingRoute.route("/analyze", methods=["POST"])
 def analyze_recording():
-    recordings = get_recordings_to_analyze()
-    recordings = list(recordings)
 
-    if recordings is None:
-        return jsonify({"success": False, "message": "No recordings to analyze"}), 200
+    with open("transcription.txt", "r") as f:
+        text = f.read()
+    context = context_analyser(text)
+    print(text)
+    return jsonify({"success": True, "message": context}), 200
+    # recordings = get_recordings_to_analyze()
+    # recordings = list(recordings)
 
-    for recording in recordings:
-        recording_id = recording["_id"]
-        recording_url = recording["recording_url"]
-        phone = recording["from"]
+    # if recordings is None:
+    #     return jsonify({"success": False, "message": "No recordings to analyze"}), 200
 
-        local_file_name = phone + ".mp3"
+    # for recording in recordings:
+    #     recording_id = recording["_id"]
+    #     recording_url = recording["recordingUrl"]
+    #     phone = recording["from"]
 
-        # process
-        download_from_s3(recording_url, local_file_name)
+    #     local_file_name = phone + ".mp3"
 
-        post_analysis_cleanup(recording_id, local_file_name)
+    #     # process
+    #     download_from_s3(recording_url, local_file_name)
+
+    #     # analyse
+    #     extract_analysis(phone, local_file_name)
+
+    #     # Cleanup
+    #     post_analysis_cleanup(recording_id, local_file_name)
 
     return jsonify({"success": True, "message": "Recordings analyzed"}), 200

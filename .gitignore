@@ -7,4 +7,5 @@ context*
 gcp-text-to-speech-key.json
 **pycache**
 **conversation_summary**
-output.mp3
+**.mp3
+**.wav
